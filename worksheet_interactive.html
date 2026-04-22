@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>바이브코딩 실습 워크시트</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a3a5c;
+    --red: #8b1a1a;
+    --green: #2d6a4f;
+    --gray: #555;
+    --bg: #f5f0e8;
+    --surface: #fff;
+    --border: #d4c9b0;
+    --text: #1c1410;
+    --muted: #888;
+    --input-bg: #fdfaf5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* 헤더 */
+  .header {
+    border-top: 4px solid var(--navy);
+    border-bottom: 1.5px solid var(--navy);
+    padding: 12px 0 10px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .header-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .header-sub {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* 저장 상태 표시 */
+  .save-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    background: #eaf3de;
+    border: 1px solid #b0d48a;
+    border-radius: 3px;
+    margin-bottom: 20px;
+    font-size: 11px;
+    color: var(--green);
+  }
+  .save-bar .save-status { font-weight: 500; }
+  .save-bar button {
+    font-size: 11px;
+    color: var(--red);
+    background: none;
+    border: 1px solid #d4a0a0;
+    padding: 2px 8px;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+  .save-bar button:hover { background: #fdf0f0; }
+
+  /* 섹션 */
+  .section {
+    margin-bottom: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .sec-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .sec-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    padding: 2px 8px;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .badge-navy { background: var(--navy); }
+  .badge-red { background: var(--red); }
+  .badge-green { background: var(--green); }
+  .badge-gray { background: var(--gray); }
+
+  .sec-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .sec-body { padding: 14px; }
+
+  /* 입력 필드 공통 */
+  input[type="text"], textarea, select {
+    width: 100%;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    outline: none;
+    transition: border-color 0.15s;
+    resize: vertical;
+  }
+  input[type="text"]:focus, textarea:focus {
+    border-color: var(--navy);
+    background: #fff;
+  }
+  .field-label {
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 4px;
+    display: block;
+  }
+  .field-hint {
+    font-size: 10px;
+    color: #bbb;
+    margin-top: 3px;
+    font-style: italic;
+  }
+  .field-group {
+    margin-bottom: 12px;
+  }
+  .field-group:last-child { margin-bottom: 0; }
+
+  /* 2열 그리드 */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  /* 활동 유형 선택 */
+  .type-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .type-option {
+    border: 1.5px solid var(--border);
+    padding: 8px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--input-bg);
+  }
+  .type-option:hover { border-color: var(--navy); background: #eef3f9; }
+  .type-option.selected {
+    border-color: var(--navy);
+    background: #e8eef5;
+  }
+  .type-option input { display: none; }
+  .type-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .type-desc {
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* RCTF 테이블 */
+  .rctf-table { border: 1px solid var(--border); }
+  .rctf-row {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+  .rctf-row:last-child { border-bottom: none; }
+  .rctf-key {
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    padding: 10px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .rctf-key-main {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    font-family: 'Noto Serif KR', serif;
+  }
+  .rctf-key-sub {
+    font-size: 9.5px;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+  .rctf-val { padding: 8px 10px; }
+  .rctf-val textarea {
+    border: none;
+    background: transparent;
+    padding: 2px 0;
+    font-size: 13px;
+    min-height: 52px;
+  }
+  .rctf-val textarea:focus { background: #fafaf5; border: none; outline: none; }
+
+  /* 프롬프트 완성 박스 */
+  .prompt-complete {
+    background: #f5f8ff;
+    border: 1.5px solid var(--navy);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .prompt-complete-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .prompt-complete-label::after {
+    content: "재미나이에 그대로 붙여넣으세요";
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 10px;
+  }
+  #prompt-output {
+    font-size: 12.5px;
+    line-height: 1.9;
+    color: var(--text);
+    white-space: pre-wrap;
+    min-height: 80px;
+  }
+  .copy-btn {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    color: #fff;
+    background: var(--navy);
+    border: none;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .copy-btn:hover { opacity: 0.85; }
+  .copy-btn.copied { background: var(--green); }
+
+  /* 수정 프롬프트 */
+  .revision-item {
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    background: var(--input-bg);
+  }
+  .revision-item:last-child { margin-bottom: 0; }
+  .revision-num {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  /* 완성 체크리스트 */
+  .checklist { display: flex; flex-direction: column; gap: 6px; }
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.1s;
+    background: var(--input-bg);
+    user-select: none;
+  }
+  .check-item:hover { background: #f0ece4; }
+  .check-item.checked {
+    background: #eaf3de;
+    border-color: #9ecf7a;
+  }
+  .check-item input { display: none; }
+  .check-icon {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--green);
+    transition: all 0.15s;
+  }
+  .check-item.checked .check-icon {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+  }
+  .check-text { font-size: 13px; color: var(--text); }
+
+  /* 도구 비교 */
+  .tool-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .tc-box {
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    background: var(--input-bg);
+  }
+  .tc-title {
+    font-size: 11px;
+    font-weight: 700;
+    padding-bottom: 6px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tc-title.llm { color: var(--green); }
+  .tc-title.canva { color: var(--navy); }
+  .tc-item {
+    font-size: 11px;
+    color: var(--gray);
+    padding: 2px 0 2px 10px;
+    position: relative;
+    line-height: 1.6;
+  }
+  .tc-item::before { content: "·"; position: absolute; left: 2px; color: #bbb; }
+
+  /* 하단 */
+  .footer {
+    text-align: center;
+    margin-top: 24px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* 방식 선택 버튼 */
+  .mode-btn {
+    border: 1.5px solid var(--border);
+    padding: 10px 12px;
+    cursor: pointer;
+    background: var(--input-bg);
+    transition: all 0.15s;
+  }
+  .mode-btn:hover { border-color: var(--navy); }
+  .mode-btn.active {
+    border-color: var(--navy);
+    background: #e8eef5;
+  }
+  #btn-free.active {
+    border-color: var(--green);
+    background: #eaf3de;
+  }
+
+  /* 반응형 */
+  @media (max-width: 520px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .type-grid { grid-template-columns: 1fr 1fr; }
+    .tool-compare { grid-template-columns: 1fr; }
+    .rctf-row { grid-template-columns: 60px 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- 헤더 -->
+  <div class="header">
+    <div class="header-title">바이브코딩 실습 워크시트</div>
+    <div class="header-sub">프롬프트가 곧 수업설계다 · 사회과 교사 연수</div>
+  </div>
+
+  <!-- 저장 상태 -->
+  <div class="save-bar">
+    <span class="save-status" id="save-status">✓ 브라우저에 자동 저장됩니다 — 창을 닫아도 내용이 유지돼요</span>
+    <button onclick="clearAll()">초기화</button>
+  </div>
+
+  <!-- STEP 1: 기본 정보 -->
+  <div class="section">
+    <div class="sec-header">
+      <span class="sec-badge badge-navy">STEP 1</span>
+      <span class="sec-title">수업 주제 결정</span>
+    </div>
+    <div class="sec-body">
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="field-group">
+          <label class="field-label">이름</label>
+          <input type="text" id="name" placeholder="홍길동">
+        </div>
+        <div class="field-group">
+          <label class="field-label">수업 대상 학년</label>
+          <input type="text" id="grade" placeholder="예) 고1, 중2">
+        </div>
+      </div>
+      <div class="grid-2" style="margin-bottom:14px;">
+        <div class="field-group">
+          <label class="field-label">단원명</label>
+          <input type="text" id="unit" placeholder="예) 민주주의와 선거">
+        </div>
+        <div class="field-group">
+          <label class="field-label">학습 목표 (한 줄)</label>
+          <input type="text" id="goal" placeholder="예) 선거의 기본 원칙을 설명할 수 있다">
+        </div>
+      </div>
+
+      <label class="field-label" style="margin-bottom:8px;">활동 유형 선택</label>
+      <div class="type-grid">
+        <label class="type-option" onclick="selectType(this, 'OX 퀴즈')">
+          <div class="type-name">OX 퀴즈</div>
+          <div class="type-desc">개념 확인 · 오개념 교정</div>
+        </label>
+        <label class="type-option" onclick="selectType(this, '4지선다 퀴즈')">
+          <div class="type-name">4지선다 퀴즈</div>
+          <div class="type-desc">단원 마무리 형성평가</div>
+        </label>
+        <label class="type-option" onclick="selectType(this, '빈칸 채우기')">
+          <div class="type-name">빈칸 채우기</div>
+          <div class="type-desc">핵심 개념어 학습</div>
+        </label>
+        <label class="type-option" onclick="selectType(this, '타임라인')">
+          <div class="type-name">타임라인</div>
+          <div class="type-desc">사건·시대 순서 정리</div>
+        </label>
+        <label class="type-option" onclick="selectType(this, '찬반 토론 카드')">
+          <div class="type-name">찬반 토론 카드</div>
+          <div class="type-desc">논쟁적 주제 입장 선택</div>
+        </label>
+        <label class="type-option" onclick="selectType(this, '자유 형식')">
+          <div class="type-name">자유 형식</div>
+          <div class="type-desc">직접 입력</div>
+        </label>
+      </div>
+      <input type="hidden" id="activity-type" value="">
+    </div>
+  </div>
+
+  <!-- STEP 2: RCTF 설계 -->
+  <div class="section">
+    <div class="sec-header">
+      <span class="sec-badge badge-red">STEP 2</span>
+      <span class="sec-title">프롬프트 설계 — 내 방식 선택하기</span>
+    </div>
+    <div class="sec-body">
+
+      <!-- 방식 선택 토글 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+        <div class="mode-btn active" id="btn-rctf" onclick="switchMode('rctf')">
+          <div style="font-size:12px;font-weight:700;color:var(--navy);">RCTF 구조 방식</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;">입문자 추천 · 한 번에 완성</div>
+        </div>
+        <div class="mode-btn" id="btn-free" onclick="switchMode('free')">
+          <div style="font-size:12px;font-weight:700;color:var(--green);">대화형 방식</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;">숙련자 모드 · 짧게 치고 다듬기</div>
+        </div>
+      </div>
+
+      <!-- RCTF 모드 -->
+      <div id="mode-rctf">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;padding:6px 10px;background:#f0f5ff;border-left:3px solid var(--navy);">
+          4가지 항목을 채우면 아래에서 완성 프롬프트가 자동으로 만들어져요. 감이 생기면 대화형 방식으로 넘어가도 돼요.
+        </div>
+        <div class="rctf-table">
+          <div class="rctf-row">
+            <div class="rctf-key">
+              <div class="rctf-key-main">R</div>
+              <div class="rctf-key-sub">역할(Role)</div>
+            </div>
+            <div class="rctf-val">
+              <textarea id="rctf-r" placeholder="예) 너는 사회과 수업 자료를 만드는 전문 교육 디자이너야." oninput="save(); buildPrompt()"></textarea>
+            </div>
+          </div>
+          <div class="rctf-row">
+            <div class="rctf-key">
+              <div class="rctf-key-main">C</div>
+              <div class="rctf-key-sub">맥락(Context)</div>
+            </div>
+            <div class="rctf-val">
+              <textarea id="rctf-c" placeholder="예) 고등학교 1학년 대상, 민주주의와 선거 단원, 수업 도입 5분 활동용" oninput="save(); buildPrompt()"></textarea>
+            </div>
+          </div>
+          <div class="rctf-row">
+            <div class="rctf-key">
+              <div class="rctf-key-main">T</div>
+              <div class="rctf-key-sub">과제(Task)</div>
+            </div>
+            <div class="rctf-val">
+              <textarea id="rctf-t" placeholder="예) 학생이 클릭하면 정답과 해설이 나오는 OX 퀴즈 10문항을 만들어줘" oninput="save(); buildPrompt()"></textarea>
+            </div>
+          </div>
+          <div class="rctf-row">
+            <div class="rctf-key">
+              <div class="rctf-key-main">F</div>
+              <div class="rctf-key-sub">형식(Format)</div>
+            </div>
+            <div class="rctf-val">
+              <textarea id="rctf-f" placeholder="예) HTML 단일 파일, 태블릿 화면 최적화, 한국어, 깔끔한 디자인" oninput="save(); buildPrompt()"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 대화형 모드 -->
+      <div id="mode-free" style="display:none;">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;padding:6px 10px;background:#f0f7f4;border-left:3px solid var(--green);">
+          일단 짧게 시작하고 결과를 보면서 하나씩 추가하는 방식이에요. AI와 대화하듯 자연스럽게 다듬어가세요.
+        </div>
+        <div class="field-group">
+          <label class="field-label">① 첫 번째 프롬프트 — 짧게 시작</label>
+          <textarea id="free-first" rows="2" placeholder="예) 항일의병운동 OX 퀴즈 HTML로 만들어줘" oninput="save(); buildFreePrompt()"></textarea>
+          <div class="field-hint">결과 보고 마음에 안 드는 걸 하나씩 추가하면 돼요</div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">② 수정 1 — 결과 보고 추가</label>
+          <textarea id="free-fix1" rows="2" placeholder="예) 배경 어둡게 해줘, 문제 10개로 늘려줘" oninput="save()"></textarea>
+        </div>
+        <div class="field-group" style="margin-bottom:0;">
+          <label class="field-label">③ 수정 2 — 더 다듬기</label>
+          <textarea id="free-fix2" rows="2" placeholder="예) 정답 클릭하면 해설 나오게 해줘, 진행 바 추가해줘" oninput="save()"></textarea>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- STEP 3: 완성 프롬프트 -->
+  <div class="section">
+    <div class="sec-header">
+      <span class="sec-badge badge-green">STEP 3</span>
+      <span class="sec-title">완성 프롬프트 — 재미나이에 바로 붙여넣기</span>
+    </div>
+    <div class="sec-body">
+      <div class="prompt-complete">
+        <div class="prompt-complete-label">완성 프롬프트</div>
+        <div id="prompt-output" style="color:#bbb;font-style:italic;font-size:12px;">STEP 2를 입력하면 자동으로 완성됩니다.</div>
+      </div>
+      <button class="copy-btn" id="copy-btn" onclick="copyPrompt()">프롬프트 복사</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: 수정 메모 -->
+  <div class="section">
+    <div class="sec-header">
+      <span class="sec-badge badge-gray">STEP 4</span>
+      <span class="sec-title">수정 프롬프트 메모 — 결과를 보고 다듬기</span>
+    </div>
+    <div class="sec-body">
+      <div class="revision-item">
+        <div class="revision-num">수정 1회차 — 무엇이 마음에 안 들었나요?</div>
+        <div class="field-group" style="margin-bottom:6px;">
+          <textarea id="rev1-problem" rows="2" placeholder="예) 문제가 너무 어려워요. 해설이 너무 짧아요." oninput="save()"></textarea>
+        </div>
+        <div class="field-group" style="margin-bottom:0;">
+          <label class="field-label">→ 수정 후 달라진 점</label>
+          <textarea id="rev1-result" rows="2" placeholder="예) 문제 난이도를 중학생 수준으로 낮춰달라고 했더니 확 달라졌어요." oninput="save()"></textarea>
+        </div>
+      </div>
+      <div class="revision-item">
+        <div class="revision-num">수정 2회차 — 추가로 바꾸고 싶은 것?</div>
+        <div class="field-group" style="margin-bottom:6px;">
+          <textarea id="rev2-problem" rows="2" placeholder="예) 배경색이 너무 밝아요. 버튼이 너무 작아요." oninput="save()"></textarea>
+        </div>
+        <div class="field-group" style="margin-bottom:0;">
+          <label class="field-label">→ 수정 후 달라진 점</label>
+          <textarea id="rev2-result" rows="2" placeholder="예) 디자인이 훨씬 깔끔해졌어요." oninput="save()"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 완성 체크리스트 -->
+  <div class="section">
+    <div class="sec-header">
+      <span class="sec-badge badge-red">완성 체크</span>
+      <span class="sec-title">하나씩 클릭해서 확인하세요</span>
+    </div>
+    <div class="sec-body">
+      <div class="checklist">
+        <div class="check-item" onclick="toggleCheck(this, 'c1')" id="c1">
+          <div class="check-icon">✓</div>
+          <span class="check-text">재미나이에서 HTML 코드가 생성됐다</span>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this, 'c2')" id="c2">
+          <div class="check-icon">✓</div>
+          <span class="check-text">캔버스 미리보기에서 동작을 확인했다</span>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this, 'c3')" id="c3">
+          <div class="check-icon">✓</div>
+          <span class="check-text">공유 링크를 복사했다</span>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this, 'c4')" id="c4">
+          <div class="check-icon">✓</div>
+          <span class="check-text">옆 사람 폰에서 실제로 열었다 🎉</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 도구 선택 기준 -->
+  <div class="section">
+    <div class="sec-header">
+      <span class="sec-badge badge-gray">참고</span>
+      <span class="sec-title">오늘 배운 도구 선택 기준</span>
+    </div>
+    <div class="sec-body">
+      <div class="tool-compare">
+        <div class="tc-box">
+          <div class="tc-title llm">재미나이 바이브코딩</div>
+          <div class="tc-item">복잡한 분기 로직 게임</div>
+          <div class="tc-item">GAS · Make.com 연동</div>
+          <div class="tc-item">AI API 실시간 피드백</div>
+          <div class="tc-item">GitHub Pages 영구 배포</div>
+        </div>
+        <div class="tc-box">
+          <div class="tc-title canva">캔바 코드</div>
+          <div class="tc-item">단순 퀴즈 · 드래그 활동</div>
+          <div class="tc-item">결과 캔바 시트 자동 저장</div>
+          <div class="tc-item">링크 클릭 한 번으로 배포</div>
+          <div class="tc-item">캔바 프레젠테이션 삽입</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    찰리쌤의 스마트 교무실 · hischarlie.tistory.com &nbsp;|&nbsp; 업무는 AI에게, 시간은 학생에게
+  </div>
+
+</div>
+
+<script>
+  const KEYS = ['name','grade','unit','goal','activity-type','rctf-r','rctf-c','rctf-t','rctf-f','free-first','free-fix1','free-fix2','rev1-problem','rev1-result','rev2-problem','rev2-result','c1','c2','c3','c4'];
+
+  // 모드 전환
+  function switchMode(mode) {
+    document.getElementById('mode-rctf').style.display = mode === 'rctf' ? 'block' : 'none';
+    document.getElementById('mode-free').style.display = mode === 'free' ? 'block' : 'none';
+    document.getElementById('btn-rctf').classList.toggle('active', mode === 'rctf');
+    document.getElementById('btn-free').classList.toggle('active', mode === 'free');
+    localStorage.setItem('ws_mode', mode);
+    if (mode === 'rctf') buildPrompt(); else buildFreePrompt();
+  }
+
+  // 대화형 모드 프롬프트 빌드
+  function buildFreePrompt() {
+    const first = document.getElementById('free-first').value.trim();
+    if (!first) {
+      setPromptEmpty();
+      return;
+    }
+    const out = document.getElementById('prompt-output');
+    out.style.cssText = 'color:#1c1410;font-size:13px;white-space:pre-wrap;';
+    out.textContent = first;
+  }
+
+  // 프롬프트 비움
+  function setPromptEmpty() {
+    const out = document.getElementById('prompt-output');
+    out.style.cssText = 'color:#bbb;font-style:italic;font-size:12px;';
+    out.textContent = 'STEP 2를 입력하면 자동으로 완성됩니다.';
+  }
+
+  // 저장
+  function save() {
+    KEYS.forEach(k => {
+      const el = document.getElementById(k);
+      if (!el) return;
+      if (el.type === 'hidden') {
+        localStorage.setItem('ws_' + k, el.value);
+      } else if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
+        localStorage.setItem('ws_' + k, el.value);
+      }
+    });
+    // 체크 상태
+    ['c1','c2','c3','c4'].forEach(k => {
+      const el = document.getElementById(k);
+      if (el) localStorage.setItem('ws_ck_' + k, el.classList.contains('checked') ? '1' : '0');
+    });
+    showSaveTime();
+  }
+
+  // 불러오기
+  function load() {
+    KEYS.forEach(k => {
+      const el = document.getElementById(k);
+      const val = localStorage.getItem('ws_' + k);
+      if (!el || val === null) return;
+      el.value = val;
+    });
+    // 활동 유형 복원
+    const saved = localStorage.getItem('ws_activity-type');
+    if (saved) {
+      document.querySelectorAll('.type-option').forEach(opt => {
+        if (opt.querySelector('.type-name') && opt.querySelector('.type-name').textContent === saved) {
+          opt.classList.add('selected');
+        }
+      });
+    }
+    // 체크 복원
+    ['c1','c2','c3','c4'].forEach(k => {
+      const el = document.getElementById(k);
+      if (el && localStorage.getItem('ws_ck_' + k) === '1') el.classList.add('checked');
+    });
+    // 모드 복원
+    const savedMode = localStorage.getItem('ws_mode') || 'rctf';
+    switchMode(savedMode);
+  }
+
+  // 저장 시간 표시
+  function showSaveTime() {
+    const now = new Date();
+    const t = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+    document.getElementById('save-status').textContent = `✓ ${t}에 자동 저장됨 — 창을 닫아도 내용이 유지돼요`;
+  }
+
+  // 활동 유형 선택
+  function selectType(el, value) {
+    document.querySelectorAll('.type-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('activity-type').value = value;
+    save();
+    buildPrompt();
+  }
+
+  // 프롬프트 자동 생성
+  function buildPrompt() {
+    const r = document.getElementById('rctf-r').value.trim();
+    const c = document.getElementById('rctf-c').value.trim();
+    const t = document.getElementById('rctf-t').value.trim();
+    const f = document.getElementById('rctf-f').value.trim();
+
+    if (!r && !c && !t && !f) {
+      document.getElementById('prompt-output').style.cssText = 'color:#bbb;font-style:italic;font-size:12px;';
+      document.getElementById('prompt-output').textContent = 'STEP 2를 입력하면 자동으로 완성됩니다.';
+      return;
+    }
+
+    let prompt = '';
+    if (r) prompt += r + '\n\n';
+    if (c) prompt += c + '\n\n';
+    if (t) prompt += t;
+    if (f) prompt += '\n\n' + f;
+
+    const out = document.getElementById('prompt-output');
+    out.style.cssText = 'color:#1c1410;font-size:13px;white-space:pre-wrap;';
+    out.textContent = prompt.trim();
+  }
+
+  // 복사
+  function copyPrompt() {
+    const text = document.getElementById('prompt-output').textContent;
+    if (!text || text.includes('STEP 2를')) return;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copy-btn');
+      btn.textContent = '복사됐어요!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = '프롬프트 복사';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+
+  // 체크 토글
+  function toggleCheck(el, key) {
+    el.classList.toggle('checked');
+    save();
+  }
+
+  // 초기화
+  function clearAll() {
+    if (!confirm('입력한 내용을 모두 지울까요?')) return;
+    KEYS.forEach(k => localStorage.removeItem('ws_' + k));
+    ['c1','c2','c3','c4'].forEach(k => localStorage.removeItem('ws_ck_' + k));
+    location.reload();
+  }
+
+  // 실시간 저장 (일반 input)
+  document.querySelectorAll('input[type="text"]').forEach(el => {
+    el.addEventListener('input', save);
+  });
+
+  // 페이지 로드 시 복원
+  window.addEventListener('load', load);
+</script>
+</body>
+</html>
