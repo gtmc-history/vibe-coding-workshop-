@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Pages 배포 가이드</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a3a5c;
+    --red: #8b1a1a;
+    --green: #2d6a4f;
+    --amber: #7a4f00;
+    --gray: #555;
+    --bg: #f5f0e8;
+    --surface: #fff;
+    --border: #d4c9b0;
+    --text: #1c1410;
+    --muted: #888;
+    --input-bg: #fdfaf5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 28px 16px 56px;
+  }
+  .container { max-width: 720px; margin: 0 auto; }
+
+  .header {
+    border-top: 4px solid var(--navy);
+    border-bottom: 1.5px solid var(--navy);
+    padding: 10px 0 8px;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .header-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .header-sub { font-size: 11px; color: var(--muted); }
+
+  .intro {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.7;
+    padding: 8px 12px;
+    border-left: 3px solid var(--border);
+    background: var(--surface);
+  }
+  .intro strong { color: var(--text); font-weight: 500; }
+
+  /* 배포 방식 비교 */
+  .compare {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .cmp-card {
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    background: var(--surface);
+  }
+  .cmp-num {
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    padding: 1px 7px;
+    margin-bottom: 7px;
+    display: inline-block;
+  }
+  .n1 { background: var(--green); }
+  .n2 { background: var(--navy); }
+  .n3 { background: var(--amber); }
+  .cmp-name { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .cmp-desc { font-size: 10.5px; color: var(--muted); line-height: 1.5; }
+  .cmp-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 6px;
+    margin-top: 6px;
+    border-radius: 2px;
+  }
+  .tag-easy { background: #eaf3de; color: var(--green); }
+  .tag-mid { background: #e8eef5; color: var(--navy); }
+  .tag-adv { background: #fef3e2; color: var(--amber); }
+
+  /* 섹션 카드 */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-bottom: 14px;
+  }
+  .card-header {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .step-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    padding: 2px 8px;
+    white-space: nowrap;
+  }
+  .b1 { background: var(--green); }
+  .b2 { background: var(--navy); }
+  .b3 { background: var(--amber); }
+  .b4 { background: var(--red); }
+  .b5 { background: var(--gray); }
+
+  .card-title { font-size: 13px; font-weight: 500; color: var(--text); }
+  .card-body { padding: 14px; }
+
+  /* 스텝 리스트 */
+  .step-list { display: flex; flex-direction: column; gap: 10px; }
+  .step-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .step-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .step-content { flex: 1; }
+  .step-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+  .step-desc {
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .step-desc strong { color: var(--text); font-weight: 500; }
+
+  /* UI 모방 박스 */
+  .ui-mock {
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-top: 6px;
+    font-size: 11.5px;
+    color: #333;
+  }
+  .ui-mock .label {
+    font-size: 10px;
+    color: #999;
+    margin-bottom: 4px;
+  }
+  .ui-btn {
+    display: inline-block;
+    background: #2da44e;
+    color: #fff;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin: 2px 2px 2px 0;
+  }
+  .ui-btn.gray { background: #eee; color: #333; border: 1px solid #ccc; }
+  .ui-btn.navy { background: var(--navy); }
+  .ui-input {
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 11px;
+    background: #fff;
+    color: #333;
+    min-width: 120px;
+  }
+  .ui-path {
+    font-family: monospace;
+    font-size: 11px;
+    background: #f0f0f0;
+    padding: 3px 8px;
+    border-radius: 3px;
+    color: #555;
+  }
+
+  /* 경고/팁 박스 */
+  .tip-box {
+    padding: 8px 12px;
+    margin-top: 8px;
+    font-size: 11.5px;
+    line-height: 1.6;
+    border-left: 3px solid;
+  }
+  .tip-box.green {
+    background: #f0f7f4;
+    border-color: var(--green);
+    color: var(--green);
+  }
+  .tip-box.amber {
+    background: #fef9f0;
+    border-color: #c8860a;
+    color: var(--amber);
+  }
+  .tip-box.navy {
+    background: #f0f4f9;
+    border-color: var(--navy);
+    color: var(--navy);
+  }
+  .tip-box strong { font-weight: 700; }
+
+  /* 흐름 화살표 */
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 12px 0;
+    flex-wrap: wrap;
+  }
+  .flow-node {
+    font-size: 11px;
+    padding: 5px 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    white-space: nowrap;
+  }
+  .flow-node.active {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+    font-weight: 500;
+  }
+  .arrow { font-size: 12px; color: var(--muted); }
+
+  /* URL 예시 */
+  .url-box {
+    background: #1a1a1a;
+    color: #7ec8e3;
+    font-family: monospace;
+    font-size: 12px;
+    padding: 10px 14px;
+    margin-top: 8px;
+    border-radius: 3px;
+    word-break: break-all;
+  }
+  .url-box .hl { color: #f9ca65; }
+
+  /* FAQ */
+  .faq-item {
+    border: 1px solid var(--border);
+    margin-bottom: 6px;
+    background: var(--surface);
+  }
+  .faq-q {
+    padding: 10px 14px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--navy);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+  }
+  .faq-q:hover { background: #f5f0e8; }
+  .faq-icon { font-size: 14px; color: var(--muted); transition: transform 0.2s; }
+  .faq-icon.open { transform: rotate(45deg); }
+  .faq-a {
+    display: none;
+    padding: 0 14px 12px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+  }
+  .faq-a.open { display: block; }
+
+  .footer {
+    text-align: center;
+    margin-top: 28px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 520px) {
+    .compare { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-title">GitHub Pages 배포 가이드</div>
+    <div class="header-sub">프롬프트가 곧 수업설계다 · 심화 자료</div>
+  </div>
+
+  <div class="intro">
+    <strong>이 자료는 "다음 단계" 자료예요.</strong><br>
+    오늘 재미나이로 만든 HTML 파일을 영구 URL로 배포하고 싶을 때 사용하세요.
+    GitHub 계정만 있으면 무료로 운영할 수 있어요.
+  </div>
+
+  <!-- 배포 방식 3단계 비교 -->
+  <div class="compare">
+    <div class="cmp-card">
+      <div class="cmp-num n1">방식 1</div>
+      <div class="cmp-name">캔바 코드</div>
+      <div class="cmp-desc">공유 버튼 클릭 한 번. 별도 설정 없음.</div>
+      <div class="cmp-tag tag-easy">클릭 1번</div>
+    </div>
+    <div class="cmp-card">
+      <div class="cmp-num n2">방식 2</div>
+      <div class="cmp-name">재미나이 캔버스</div>
+      <div class="cmp-desc">공유 링크 복사. 임시 링크라 장기 보관 어려움.</div>
+      <div class="cmp-tag tag-mid">5분</div>
+    </div>
+    <div class="cmp-card" style="border-color: var(--navy);">
+      <div class="cmp-num n3">방식 3</div>
+      <div class="cmp-name">GitHub Pages ←</div>
+      <div class="cmp-desc">영구 URL. 여러 파일 관리 가능. 찰리쌤 방식.</div>
+      <div class="cmp-tag tag-adv">이 가이드</div>
+    </div>
+  </div>
+
+  <!-- STEP 1: 계정 만들기 -->
+  <div class="card">
+    <div class="card-header">
+      <span class="step-badge b1">STEP 1</span>
+      <span class="card-title">GitHub 계정 만들기 — github.com</span>
+    </div>
+    <div class="card-body">
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">github.com 접속 → Sign up 클릭</div>
+            <div class="step-desc">이메일·비밀번호·사용자명 입력. <strong>사용자명이 나중에 URL에 포함</strong>돼요.</div>
+            <div class="ui-mock">
+              <div class="label">사용자명 예시</div>
+              <span class="ui-input">hischarlie</span>
+              <span style="font-size:11px;color:#aaa;margin-left:6px;">→ hischarlie.github.io</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">이메일 인증 완료</div>
+            <div class="step-desc">가입 후 인증 메일 확인. 클릭하면 바로 사용 가능.</div>
+          </div>
+        </div>
+      </div>
+      <div class="tip-box green" style="margin-top:12px;">
+        <strong>이미 계정이 있다면</strong> STEP 1 건너뛰고 STEP 2로 바로 가세요.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: 저장소 만들기 -->
+  <div class="card">
+    <div class="card-header">
+      <span class="step-badge b2">STEP 2</span>
+      <span class="card-title">저장소(Repository) 만들기</span>
+    </div>
+    <div class="card-body">
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">오른쪽 상단 + 버튼 → New repository</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">저장소 이름 입력</div>
+            <div class="step-desc"><strong>수업용 게임 모아두려면</strong> 이름을 의미있게 짓는 게 좋아요.</div>
+            <div class="ui-mock">
+              <div class="label">Repository name</div>
+              <span class="ui-input">history-games</span>
+              <span style="font-size:10px;color:#aaa;margin-left:6px;">예시</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Public 선택 → Add a README file 체크 → Create repository</div>
+            <div class="step-desc"><strong>Public으로 해야</strong> GitHub Pages 무료 사용 가능.</div>
+            <div class="ui-mock">
+              <div class="label">설정 확인</div>
+              <span class="ui-btn gray">○ Private</span>
+              <span class="ui-btn" style="background:#0969da;">● Public</span>
+              <div style="margin-top:6px;">
+                <span style="font-size:11px;">☑ Add a README file</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: 파일 업로드 -->
+  <div class="card">
+    <div class="card-header">
+      <span class="step-badge b3">STEP 3</span>
+      <span class="card-title">HTML 파일 업로드</span>
+    </div>
+    <div class="card-body">
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">재미나이 캔버스에서 HTML 파일 저장</div>
+            <div class="step-desc">캔버스 오른쪽 상단 → <strong>다운로드</strong> → 파일명 확인</div>
+            <div class="ui-mock">
+              <div class="label">파일명 예시 (한글·공백 금지)</div>
+              <span class="ui-path">uibyeong-quiz.html</span>
+              <span style="margin:0 6px;color:#aaa;">→ OK</span>
+              <span class="ui-path" style="color:#c0392b;text-decoration:line-through;">의병 퀴즈.html</span>
+              <span style="margin-left:6px;color:#c0392b;">→ NG</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">저장소에서 Add file → Upload files</div>
+            <div class="ui-mock">
+              <div class="label">버튼 위치</div>
+              <span class="ui-btn gray">Code ▼</span>
+              <span class="ui-btn gray">Add file ▼</span>
+              <span class="ui-btn gray">⊕ Upload files</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">파일 드래그 or 파일 선택 → Commit changes 클릭</div>
+            <div class="ui-mock">
+              <div class="label">하단 커밋 버튼</div>
+              <span class="ui-btn">Commit changes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: Pages 활성화 -->
+  <div class="card">
+    <div class="card-header">
+      <span class="step-badge b4">STEP 4</span>
+      <span class="card-title">GitHub Pages 활성화 — 딱 한 번만 하면 됩니다</span>
+    </div>
+    <div class="card-body">
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">저장소 상단 Settings 탭 클릭</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">왼쪽 메뉴 → Pages</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Source → Deploy from a branch → main 선택 → Save</div>
+            <div class="ui-mock">
+              <div class="label">Branch 설정</div>
+              <span class="ui-input">main</span>
+              <span style="margin:0 4px;color:#aaa;">/</span>
+              <span class="ui-input">/ (root)</span>
+              <span class="ui-btn" style="margin-left:6px;">Save</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">1~2분 기다리면 URL 생성 완료</div>
+            <div class="url-box">
+              https://<span class="hl">hischarlie</span>.github.io/<span class="hl">history-games</span>/uibyeong-quiz.html
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tip-box amber" style="margin-top:12px;">
+        <strong>Pages 설정은 저장소당 한 번만.</strong> 이후 파일 추가·수정은 STEP 3만 반복하면 돼요.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5: 학생에게 공유 -->
+  <div class="card">
+    <div class="card-header">
+      <span class="step-badge b5">STEP 5</span>
+      <span class="card-title">학생에게 공유하기</span>
+    </div>
+    <div class="card-body">
+      <div class="flow-arrow">
+        <div class="flow-node active">URL 복사</div>
+        <div class="arrow">→</div>
+        <div class="flow-node active">QR 생성</div>
+        <div class="arrow">→</div>
+        <div class="flow-node active">클래스룸·카톡 전송</div>
+        <div class="arrow">→</div>
+        <div class="flow-node active">학생 접속</div>
+      </div>
+      <div class="tip-box navy" style="margin-top:4px;">
+        <strong>QR 생성 무료 사이트</strong> — qr.io / qrcode-monkey.com / 구글 검색창에 URL 붙여넣으면 QR 바로 생성
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="card">
+    <div class="card-header">
+      <span class="step-badge b5">FAQ</span>
+      <span class="card-title">자주 묻는 질문</span>
+    </div>
+    <div class="card-body" style="padding: 8px 0 0;">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          파일 수정하면 URL도 바뀌나요?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">
+          URL은 바뀌지 않아요. 같은 파일명으로 다시 업로드하면 자동으로 업데이트돼요. 1~2분 후 새로고침하면 반영됩니다.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          게임 파일을 여러 개 올릴 수 있나요?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">
+          네, 하나의 저장소에 여러 HTML 파일을 올릴 수 있어요. 찰리쌤처럼 10개 게임을 한 저장소에서 운영하는 것도 가능해요. 파일마다 URL이 다르게 생성됩니다.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          학생 데이터(점수 등)도 저장되나요?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">
+          GitHub Pages는 정적 호스팅이라 데이터 저장이 안 돼요. 학생 결과를 수집하려면 Google Forms + GAS 연동이 필요해요. 오늘 강의 범위를 넘어서는 내용이에요.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          비용이 드나요?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">
+          Public 저장소 + GitHub Pages는 완전 무료예요. 저장 용량 제한(1GB)이 있지만 HTML 파일만 올리면 거의 제한에 걸리지 않아요.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          index.html이 뭔가요? 꼭 필요한가요?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">
+          index.html은 폴더 주소로 접속했을 때 자동으로 열리는 파일이에요. 없어도 되지만, 게임 목록 페이지를 만들고 싶다면 index.html을 만들어두면 편해요.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    찰리쌤의 스마트 교무실 · hischarlie.tistory.com &nbsp;|&nbsp; 업무는 AI에게, 시간은 학생에게
+  </div>
+
+</div>
+
+<script>
+function toggleFaq(el) {
+  const answer = el.nextElementSibling;
+  const icon = el.querySelector('.faq-icon');
+  const isOpen = answer.classList.contains('open');
+  answer.classList.toggle('open', !isOpen);
+  icon.classList.toggle('open', !isOpen);
+}
+</script>
+</body>
+</html>
